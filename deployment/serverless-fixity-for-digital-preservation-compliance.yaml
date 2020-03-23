@@ -19,6 +19,7 @@ Mappings:
         Template:
             KeyPrefix: "%KEYPREFIX%"
             S3Bucket: "%BUCKET%"
+            SingleRegion: "%SINGLE_REGION%"
         Package:
             CustomResourceX: "%PKG_CUSTOM_RESOURCES%"
         SNS:
@@ -81,6 +82,14 @@ Conditions:
             !Ref Email,
             ""
         ]
+    ]
+    bSingleRegion: !Equals [
+        !FindInMap [
+            "Solution",
+            "Template",
+            "SingleRegion"
+        ],
+        "true"
     ]
 
 Resources:
@@ -202,11 +211,16 @@ Resources:
             Role: !GetAtt CustomResourceExecutionRole.Arn
             Code:
                 S3Bucket: !Sub [
-                    "${x0}-${AWS::Region}", {
+                    "${x0}${x1}", {
                         x0: !FindInMap [
                             "Solution",
                             "Template",
                             "S3Bucket"
+                        ],
+                        x1: !If [
+                            bSingleRegion,
+                            !Sub "-${AWS::Region}",
+                            ""
                         ]
                     }
                 ]
@@ -323,13 +337,18 @@ Resources:
         Type: AWS::CloudFormation::Stack
         Properties:
             TemplateURL: !Sub [
-                "https://${x0}-${AWS::Region}.s3.amazonaws.com/${x1}/serverless-fixity-for-digital-preservation-compliance-state-machine-stack.template", {
+                "https://${x0}${x1}.s3.amazonaws.com/${x2}/serverless-fixity-for-digital-preservation-compliance-state-machine-stack.template", {
                     x0: !FindInMap [
                         "Solution",
                         "Template",
                         "S3Bucket"
                     ],
-                    x1: !FindInMap [
+                    x1: !If [
+                        bSingleRegion,
+                        !Sub "-${AWS::Region}",
+                        ""
+                    ],
+                    x2: !FindInMap [
                         "Solution",
                         "Template",
                         "KeyPrefix"
@@ -338,12 +357,17 @@ Resources:
             ]
             Parameters:
                 S3Bucket: !Sub [
-                    "${x0}-${AWS::Region}", {
+                    "${x0}${x1}", {
                         x0: !FindInMap [
                             "Solution",
                             "Template",
                             "S3Bucket"
-                        ]
+                        ],
+                        x1: !If [
+                            bSingleRegion,
+                            !Sub "-${AWS::Region}",
+                            ""
+                        ],
                     }
                 ]
                 KeyPrefix: !FindInMap [
@@ -370,13 +394,18 @@ Resources:
         Type: AWS::CloudFormation::Stack
         Properties:
             TemplateURL: !Sub [
-                "https://${x0}-${AWS::Region}.s3.amazonaws.com/${x1}/serverless-fixity-for-digital-preservation-compliance-api-stack.template", {
+                "https://${x0}${x1}.s3.amazonaws.com/${x2}/serverless-fixity-for-digital-preservation-compliance-api-stack.template", {
                     x0: !FindInMap [
                         "Solution",
                         "Template",
                         "S3Bucket"
                     ],
-                    x1: !FindInMap [
+                    x1: !If [
+                        bSingleRegion,
+                        !Sub "-${AWS::Region}",
+                        ""
+                    ],
+                    x2: !FindInMap [
                         "Solution",
                         "Template",
                         "KeyPrefix"
@@ -385,12 +414,17 @@ Resources:
             ]
             Parameters:
                 S3Bucket: !Sub [
-                    "${x0}-${AWS::Region}", {
+                    "${x0}${x1}", {
                         x0: !FindInMap [
                             "Solution",
                             "Template",
                             "S3Bucket"
-                        ]
+                        ],
+                        x1: !If [
+                            bSingleRegion,
+                            !Sub "-${AWS::Region}",
+                            ""
+                        ],
                     }
                 ]
                 KeyPrefix: !FindInMap [

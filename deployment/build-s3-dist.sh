@@ -27,6 +27,14 @@ where
   --solution SOLUTION         [optional] if not specified, use 'solution name' from package.json
 
   --version VERSION           [optional] if not specified, use 'version' field from package.json
+
+  --single-region             [optional] specify if it is a single region deployment. This affects
+                              how the solution template looks up the location of the packages. If
+                              '--single-region' is specified, the solution stores templates and
+                              packages in the bucket that you specify in '--bucket' setting.
+                              If '--single-region' is not specified, the solution stores templates
+                              and packages in the bucket that uses region suffix. For example, if
+                              --bucket MY_BUCKET, then the actual bucket name will be MY_BUCKET-us-east-1
 "
   return 0
 }
@@ -55,6 +63,10 @@ while [[ $# -gt 0 ]]; do
       VERSION="$2"
       shift # past key
       shift # past value
+      ;;
+      -r|--single-region)
+      SINGLE_REGION=true
+      shift # past key
       ;;
       *)
       shift
@@ -90,6 +102,8 @@ TMP_DIR=$(mktemp -d)
   usage && \
   exit 1
 
+[ -z "$SINGLE_REGION" ] && \
+  SINGLE_REGION=false
 
 ## zip packages' names
 ## note:
@@ -179,6 +193,9 @@ function build_cloudformation_templates() {
   # custom resource name
   echo "Updating %PKG_CUSTOM_RESOURCES% param in cloudformation templates..."
   sed -i'.bak' -e "s|%PKG_CUSTOM_RESOURCES%|${PKG_CUSTOM_RESOURCES}|g" *.yaml || exit 1
+  # single region setting
+  echo "Updating %SINGLE_REGION% param in cloudformation templates..."
+  sed -i'.bak' -e "s|%SINGLE_REGION%|${SINGLE_REGION}|g" *.yaml || exit 1
   # remove .bak
   runcmd rm -v *.bak
   # Rename all *.yaml to *.template
