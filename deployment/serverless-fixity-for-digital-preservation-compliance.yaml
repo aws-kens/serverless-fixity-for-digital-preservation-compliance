@@ -219,8 +219,8 @@ Resources:
                         ],
                         x1: !If [
                             bSingleRegion,
-                            !Sub "-${AWS::Region}",
-                            ""
+                            "",
+                            !Sub "-${AWS::Region}"
                         ]
                     }
                 ]
@@ -345,8 +345,8 @@ Resources:
                     ],
                     x1: !If [
                         bSingleRegion,
-                        !Sub "-${AWS::Region}",
-                        ""
+                        "",
+                        !Sub "-${AWS::Region}"
                     ],
                     x2: !FindInMap [
                         "Solution",
@@ -365,8 +365,8 @@ Resources:
                         ],
                         x1: !If [
                             bSingleRegion,
-                            !Sub "-${AWS::Region}",
-                            ""
+                            "",
+                            !Sub "-${AWS::Region}"
                         ],
                     }
                 ]
@@ -402,8 +402,8 @@ Resources:
                     ],
                     x1: !If [
                         bSingleRegion,
-                        !Sub "-${AWS::Region}",
-                        ""
+                        "",
+                        !Sub "-${AWS::Region}"
                     ],
                     x2: !FindInMap [
                         "Solution",
@@ -422,8 +422,8 @@ Resources:
                         ],
                         x1: !If [
                             bSingleRegion,
-                            !Sub "-${AWS::Region}",
-                            ""
+                            "",
+                            !Sub "-${AWS::Region}"
                         ],
                     }
                 ]
